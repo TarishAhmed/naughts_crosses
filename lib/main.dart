@@ -31,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String?> _board = List.filled(9, null);
   bool _isXTurn = true;
   String? _winner;
+  List<int> _winningCombo = [];
 
   void _handleTap(int index) {
     if (_board[index] != null || _winner != null) return;
@@ -57,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (_board[a] != null &&
           _board[a] == _board[b] &&
           _board[a] == _board[c]) {
+        _winningCombo = combo;
         return _board[a];
       }
     }
@@ -69,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _board = List.filled(9, null);
       _isXTurn = true;
       _winner = null;
+      _winningCombo = [];
     });
   }
 
@@ -100,16 +103,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 itemCount: 9,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => _handleTap(index),
+                  final cellValue = _board[index] ?? '';
+                  final isWinning =
+                      _winner != null && _winningCombo.contains(index);
+                  return InkWell(
+                    onTap: _winner == null ? () => _handleTap(index) : null,
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.black),
                       ),
                       child: Center(
                         child: Text(
-                          _board[index] ?? '',
-                          style: Theme.of(context).textTheme.headlineLarge,
+                          cellValue,
+                          style: TextStyle(
+                            fontSize: 48,
+                            color: isWinning ? Colors.green : Colors.black,
+                          ),
                         ),
                       ),
                     ),
